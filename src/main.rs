@@ -9,14 +9,22 @@ fn main() {
     numbers.shuffle(&mut rng);
 
     let mut total = 0;
+    let mut dealer_total = 0;
 
+    // Starting position
+    print!("To you: ");
+    total += deal_card(total);
+    print!("To dealer: ");
+    dealer_total += deal_card(total);
+    print!("To you: ");
     total += deal_card(total);
 
     println!("You're at {}", total);
+    println!("Dealers at {}", dealer_total);
 
-    total += deal_card(total);
-
-    println!("You're at {}", total);
+    if total == 21 {
+        println!("Blackjack, you won");
+    }
 }
 
 fn deal_card(total: i32) -> i32 {
@@ -43,7 +51,7 @@ fn get_card() -> i32 {
     let suit = suits.choose(&mut rng).unwrap();
     let number = numbers.choose(&mut rng).unwrap();
 
-    println!("{} {}", suit, number);
+    println!("{}{}", suit, number);
 
     return *number;
 }
