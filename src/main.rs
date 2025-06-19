@@ -1,4 +1,6 @@
 use rand::seq::SliceRandom;
+use std::io;
+
 fn main() {
     let mut rng: rand::prelude::ThreadRng = rand::thread_rng();
 
@@ -11,7 +13,6 @@ fn main() {
     let mut total = 0;
     let mut dealer_total = 0;
 
-    // Starting position
     print!("To you: ");
     total += deal_card(total);
     print!("To dealer: ");
@@ -22,8 +23,49 @@ fn main() {
     println!("You're at {}", total);
     println!("Dealers at {}", dealer_total);
 
-    if total == 21 {
+    let mut stand = false;
+
+    while !stand && total < 21 {
+        println!("H to hit, S to stand");
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                let input = input.trim();
+                if input == "S" || input == "s" {
+                    stand = true;
+                } else if input == "H" || input == "h" {
+                    print!("To you: ");
+                    total += deal_card(total);
+                    println!("You're at {}", total);
+                }
+            }
+            Err(error) => println!("error: {error}"),
+        }
+    }
+
+    if total > 21 {
+        println!("You bust");
+    } else if total == 21 {
         println!("Blackjack, you won");
+    } else {
+        println!("You stand at {}", total);
+        println!("Dealers turn");
+
+        while dealer_total <= 17 {
+            print!("To dealer: ");
+            dealer_total += deal_card(total);
+        }
+        println!("Dealers at {}", dealer_total);
+
+        if dealer_total > 21 {
+            println!("Dealer busts, you win!");
+        } else if total > dealer_total {
+            println!("You win");
+        } else if total == dealer_total {
+            println!("Draw");
+        } else {
+            println!("You lose");
+        }
     }
 }
 
